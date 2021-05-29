@@ -1,37 +1,51 @@
-import React from "react";
-import { Searchbar } from "react-native-paper";
-import { StyleSheet, Text, View, SafeAreaView, StatusBar } from "react-native";
+import React, { useContext } from "react";
+import { Searchbar, ActivityIndicator } from "react-native-paper";
+import { FlatList } from "react-native";
+import styled from "styled-components/native";
 
-import { fontsize, spacing } from "../../../utils/sizes";
 import { RestaurantCard } from "../components/restaurant-card";
+import { SafeArea } from "../../../components/safearea";
+import { RestaurantsContext } from "../../../services/restaurants/restaurants.context";
 
-export function Restaurant() {
+const SearchContainer = styled.View`
+  padding: ${(props) => props.theme.spacing.m};
+`;
+
+const ListContainer = styled.View`
+  flex: 1;
+  background-color: ${(props) => props.theme.colors.ui.yellow};
+  padding: ${(props) => props.theme.spacing.m};
+`;
+
+const LoadingContainer = styled.View`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+`;
+
+export function Restaurants() {
+  const { isLoading, error, restaurants } = useContext(RestaurantsContext);
   return (
     <>
-      <SafeAreaView style={styles.container}>
-        <View style={styles.search}>
+      <SafeArea>
+        <SearchContainer>
           <Searchbar />
-        </View>
-        <View style={styles.list}>
-          <RestaurantCard />
-        </View>
-      </SafeAreaView>
+        </SearchContainer>
+        <ListContainer>
+          {isLoading && (
+            <LoadingContainer>
+              <ActivityIndicator size={50} animating={true} color="grey" />
+            </LoadingContainer>
+          )}
+          <FlatList
+            data={restaurants}
+            renderItem={({ item }) => {
+              return <RestaurantCard restaurant={item} />;
+            }}
+            keyExtractor={(item) => item.name}
+          />
+        </ListContainer>
+      </SafeArea>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    marginTop: StatusBar.currentHeight,
-    backgroundColor: "pink",
-  },
-  search: {
-    padding: spacing.m,
-  },
-  list: {
-    flex: 1,
-    backgroundColor: "orange",
-    padding: spacing.m,
-  },
-});
