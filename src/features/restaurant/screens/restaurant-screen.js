@@ -1,20 +1,16 @@
 import React, { useContext } from "react";
-import { Searchbar, ActivityIndicator } from "react-native-paper";
-import { FlatList } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
+import { FlatList, TouchableOpacity, StyleSheet } from "react-native";
 import styled from "styled-components/native";
 
 import { RestaurantCard } from "../components/restaurant-card";
+import { Search } from "../components/search.component";
 import { SafeArea } from "../../../components/safearea";
 import { RestaurantsContext } from "../../../services/restaurants/restaurants.context";
-
-const SearchContainer = styled.View`
-  padding: ${(props) => props.theme.spacing.m};
-`;
 
 const ListContainer = styled.View`
   flex: 1;
   background-color: ${(props) => props.theme.colors.ui.yellow};
-  padding: ${(props) => props.theme.spacing.m};
 `;
 
 const LoadingContainer = styled.View`
@@ -23,14 +19,12 @@ const LoadingContainer = styled.View`
   left: 50%;
 `;
 
-export function Restaurants() {
+export function Restaurants({ navigation }) {
   const { isLoading, error, restaurants } = useContext(RestaurantsContext);
   return (
     <>
       <SafeArea>
-        <SearchContainer>
-          <Searchbar />
-        </SearchContainer>
+        <Search />
         <ListContainer>
           {isLoading && (
             <LoadingContainer>
@@ -40,12 +34,29 @@ export function Restaurants() {
           <FlatList
             data={restaurants}
             renderItem={({ item }) => {
-              return <RestaurantCard restaurant={item} />;
+              return (
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("RestaurantDetail", {
+                      restaurant: item,
+                    })
+                  }
+                >
+                  <RestaurantCard restaurant={item} />
+                </TouchableOpacity>
+              );
             }}
             keyExtractor={(item) => item.name}
+            contentContainerStyle={styles.contentContainer}
           />
         </ListContainer>
       </SafeArea>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  contentContainer: {
+    padding: 16,
+  },
+});

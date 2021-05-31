@@ -2,7 +2,6 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Card } from "react-native-paper";
 import styled from "styled-components/native";
-import { SvgXml } from "react-native-svg";
 import FilledStar from "../../../../assets/filledstar.svg";
 import EmptyStar from "../../../../assets/emptystar.svg";
 import NowOpen from "../../../../assets/open.svg";
@@ -72,11 +71,21 @@ export function RestaurantCard({ restaurant = {} }) {
         <Title>{name}</Title>
         <Section>
           <Rating>
-            {ratingArray.map(() => (
-              <FilledStar width={16} height={16} fill="#000" />
+            {ratingArray.map((_, i) => (
+              <FilledStar
+                key={`${name}-${i}`}
+                width={16}
+                height={16}
+                fill="#000"
+              />
             ))}
-            {nonRatingArray.map(() => (
-              <EmptyStar width={16} height={16} fill="#000" />
+            {nonRatingArray.map((_, i) => (
+              <EmptyStar
+                key={`${name}-${i}`}
+                width={16}
+                height={16}
+                fill="#000"
+              />
             ))}
             <SectionEnd>
               {isOpenNow && !isClosedTemporarily ? (
